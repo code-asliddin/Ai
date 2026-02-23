@@ -5,37 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Search - Karimov Asliddin</title>
     <style>
-        /* Upgrade Dizayn */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        /* Upgrade Dizayn va Scroll muammosi yechimi */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
         body { 
             background: radial-gradient(circle at top right, #1e1b4b, #020617); 
-            height: 100vh; 
+            min-height: 100vh; /* Sahifa cho'zilishi uchun */
             color: white; 
-            overflow: hidden;
+            overflow-y: auto; /* Scroll ishlashi uchun */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            padding: 100px 20px 50px; /* Tepadan tugma uchun joy */
         }
 
-        /* Hamburger Menyu Tugmasi - Har doim tepada */
+        /* Menyu Tugmasi - Har doim eng ustida */
         .menu-btn { 
             position: fixed; 
             top: 20px; 
             left: 20px; 
             font-size: 24px; 
             cursor: pointer; 
-            z-index: 10000; /* Eng yuqori qatlam */
+            z-index: 10001; 
             background: rgba(255, 255, 255, 0.1); 
-            padding: 12px; 
+            padding: 12px 16px; 
             border-radius: 14px; 
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .menu-btn:active { transform: scale(0.9); }
 
-        /* Sidebar - Chapdan chiqadigan menyu */
+        /* Yon Menyu (Sidebar) */
         .sidebar { 
             position: fixed; 
             left: -300px; 
@@ -43,9 +44,9 @@
             width: 280px; 
             height: 100%; 
             background: rgba(15, 23, 42, 0.98); 
-            backdrop-filter: blur(20px); 
+            backdrop-filter: blur(25px); 
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 9999; 
+            z-index: 10000; 
             padding: 90px 20px 20px; 
             border-right: 1px solid rgba(56, 189, 248, 0.3);
             display: flex;
@@ -53,75 +54,64 @@
         }
         .sidebar.active { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
 
-        .sidebar h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .sidebar h3 { font-size: 1rem; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; letter-spacing: 1px; }
         .creator-info { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 30px; }
-        .creator-info p { font-size: 0.9rem; line-height: 1.6; }
+        .creator-info p { font-size: 0.9rem; margin-bottom: 5px; }
 
-        /* Tarix ro'yxati */
         .history-list { flex-grow: 1; overflow-y: auto; list-style: none; }
         .history-item { 
-            background: rgba(255,255,255,0.05); 
-            padding: 12px; 
-            border-radius: 10px; 
-            margin-bottom: 10px; 
-            font-size: 0.85rem; 
-            cursor: pointer; 
-            border: 1px solid transparent;
-            transition: 0.2s;
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; 
+            margin-bottom: 10px; font-size: 0.85rem; cursor: pointer; border: 1px solid transparent;
         }
-        .history-item:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
 
         /* Asosiy Card */
         .glass-card { 
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(20px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 30px; 
-            padding: 40px; 
-            width: 90%; 
-            max-width: 450px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            z-index: 1;
+            border-radius: 28px; 
+            padding: 30px; 
+            width: 100%; 
+            max-width: 500px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
         }
 
-        h1 { font-size: 2.2rem; margin-bottom: 25px; text-align: center; letter-spacing: -1px; }
-        
+        h1 { font-size: 2rem; margin-bottom: 20px; text-align: center; color: white; }
         input { 
             width: 100%; padding: 16px; background: rgba(255, 255, 255, 0.08); 
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; 
             color: white; margin-bottom: 15px; outline: none; font-size: 1rem;
         }
-        input:focus { border-color: #38bdf8; background: rgba(255, 255, 255, 0.12); }
-
         button { 
             width: 100%; padding: 16px; background: #0ea5e9; border: none; 
-            border-radius: 16px; color: white; font-weight: 700; cursor: pointer; 
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+            border-radius: 16px; color: white; font-weight: bold; cursor: pointer; 
+            transition: 0.3s;
         }
-        button:hover { background: #0284c7; transform: translateY(-2px); }
+        button:active { transform: scale(0.98); }
 
+        /* Javob oynasi */
         #res { 
             margin-top: 25px; background: rgba(0, 0, 0, 0.3); 
-            padding: 20px; border-radius: 18px; min-height: 100px; 
-            border: 1px solid rgba(255, 255, 255, 0.05); line-height: 1.6;
+            padding: 20px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.05); 
+            line-height: 1.6; word-wrap: break-word; /* Uzun matnlar uchun */
         }
     </style>
 </head>
 <body>
 
-    <div class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
 
     <div class="sidebar" id="sidebar">
         <h3>CREATOR</h3>
         <div class="creator-info">
             <p><strong>Ism:</strong> Karimov Asliddin</p>
-            <p><strong>Roli:</strong> Full-Stack Developer</p>
-            <p><strong>Tizim:</strong> AI Groq Engine</p>
+            <p><strong>Roli:</strong> AI Developer</p>
         </div>
         
-        <h3>SAVOLLAR TARIXI</h3>
+        <h3>TARIX</h3>
         <div class="history-list" id="historyList">
-            <div class="history-item" style="opacity: 0.5;">Tarix hali bo'sh...</div>
+            <div class="history-item" style="opacity: 0.5;">Hozircha bo'sh...</div>
         </div>
     </div>
 
@@ -132,30 +122,30 @@
         
         <div id="res">
             <strong style="color: #38bdf8;">Javob:</strong>
-            <p id="answer" style="margin-top: 8px; opacity: 0.9;">Salom, Karimov Asliddin tomonidan yaratilgan AI-ga xush kelibsiz!</p>
+            <p id="answer" style="margin-top: 10px;">Salom! Men sizga qanday yordam bera olaman?</p>
         </div>
     </div>
 
     <script>
         function toggleMenu() {
             const sidebar = document.getElementById('sidebar');
-            const btn = document.getElementById('menuBtn');
             sidebar.classList.toggle('active');
             
+            // Menyu ochiqligida body scrollni boshqarish
             if (sidebar.classList.contains('active')) {
-                btn.innerHTML = '✕';
+                document.body.style.overflow = "hidden";
             } else {
-                btn.innerHTML = '☰';
+                document.body.style.overflow = "auto";
             }
         }
 
         async function askAI() {
             const input = document.getElementById('query');
             const answer = document.getElementById('answer');
-            const history = document.getElementById('historyList');
-            const text = input.value.trim();
+            const historyList = document.getElementById('historyList');
+            const query = input.value.trim();
 
-            if (!text) return;
+            if (!query) return;
 
             answer.innerText = "Qidirilmoqda...";
             
@@ -163,30 +153,30 @@
                 const response = await fetch('/search', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `query=${encodeURIComponent(text)}`
+                    body: `query=${encodeURIComponent(query)}`
                 });
                 
                 const data = await response.json();
-                answer.innerText = data.result || "Xatolik yuz berdi.";
+                answer.innerText = data.result || "Xatolik!";
 
                 // Tarixga qo'shish
-                if (history.innerHTML.includes("bo'sh")) history.innerHTML = "";
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerText = text;
-                div.onclick = () => { input.value = text; toggleMenu(); };
-                history.prepend(div);
+                if (historyList.innerHTML.includes("bo'sh")) historyList.innerHTML = "";
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerText = query.substring(0, 30) + "...";
+                item.onclick = () => { input.value = query; toggleMenu(); };
+                historyList.prepend(item);
                 
-                input.value = ""; // Inputni tozalash
+                input.value = "";
             } catch (e) {
-                answer.innerText = "Server bilan bog'lanishda xato!";
+                answer.innerText = "Server xatosi!";
             }
         }
 
-        // Sidebar tashqarisini bossa yopish
+        // Tashqarini bossa yopish
         document.addEventListener('click', (e) => {
             const sidebar = document.getElementById('sidebar');
-            const btn = document.getElementById('menuBtn');
+            const btn = document.querySelector('.menu-btn');
             if (!sidebar.contains(e.target) && !btn.contains(e.target) && sidebar.classList.contains('active')) {
                 toggleMenu();
             }
