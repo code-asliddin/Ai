@@ -3,66 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Search Ultra - Karimov Asliddin</title>
+    <title>AI Search Premium - Karimov Asliddin</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --accent: #00d2ff; --bg: #050a18; --glass: rgba(255, 255, 255, 0.05); }
+        :root { 
+            --gold: #dfc27d; /* Och tillarang */
+            --dark-grey: #1e293b; /* To'q kulrang */
+            --light-grey: #f1f5f9; /* Och kulrang matn uchun */
+            --bg: #0f172a; /* Asosiy fon */
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background: var(--bg); color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--bg); color: var(--light-grey); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Sidebar */
-        .sidebar { position: fixed; left: -100%; top: 0; width: 80%; max-width: 300px; height: 100%; background: rgba(10, 20, 40, 0.98); backdrop-filter: blur(20px); transition: 0.3s ease; z-index: 10000; padding: 80px 20px; border-right: 1px solid rgba(255,255,255,0.1); }
-        .sidebar.active { left: 0; }
-        .menu-toggle { position: fixed; top: 15px; left: 15px; z-index: 10001; font-size: 24px; cursor: pointer; color: var(--accent); background: var(--glass); padding: 8px 12px; border-radius: 12px; }
+        /* Sidebar - Premium Style */
+        .sidebar { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: var(--dark-grey); backdrop-filter: blur(15px); transition: 0.3s ease; z-index: 10000; padding: 80px 20px; border-right: 1px solid rgba(223, 194, 125, 0.2); }
+        .sidebar.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+        .menu-toggle { position: fixed; top: 15px; left: 15px; z-index: 10001; font-size: 22px; cursor: pointer; color: var(--gold); background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 12px; }
 
-        /* Chat Display Area */
-        .chat-display { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
-        .welcome-msg { text-align: center; margin-top: 50px; opacity: 0.8; }
-        .welcome-msg h1 { font-size: 1.8rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Chat Area */
+        .chat-display { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; display: flex; flex-direction: column; gap: 20px; }
+        .welcome-msg { text-align: center; margin-top: 40px; }
+        .welcome-msg h1 { font-size: 2rem; color: var(--gold); letter-spacing: 1px; margin-bottom: 5px; }
 
-        /* Floating Bottom Input */
-        .input-container { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, var(--bg) 80%, transparent); padding: 20px 15px 30px; z-index: 999; }
-        .input-wrapper { max-width: 600px; margin: 0 auto; display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(15px); padding: 8px 15px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* Xabar pufakchalari */
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 20px; line-height: 1.6; font-size: 0.95rem; animation: fadeIn 0.3s ease; }
+        .user-msg { align-self: flex-end; background: var(--gold); color: #000; border-bottom-right-radius: 4px; font-weight: 500; }
+        .ai-msg { align-self: flex-start; background: var(--dark-grey); color: var(--light-grey); border-bottom-left-radius: 4px; border: 1px solid rgba(223, 194, 125, 0.1); }
+
+        /* Pastki qism - Input Fixed */
+        .input-container { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, var(--bg) 70%, transparent); padding: 20px 15px 40px; }
+        .input-wrapper { max-width: 600px; margin: 0 auto; display: flex; align-items: center; gap: 12px; background: #334155; padding: 10px 18px; border-radius: 30px; border: 1px solid rgba(223, 194, 125, 0.3); }
         
-        input { flex: 1; background: transparent; border: none; color: white; padding: 12px 5px; outline: none; font-size: 16px; }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 10px; outline: none; font-size: 16px; }
+        input::placeholder { color: #94a3b8; }
         
-        .action-btn { background: transparent; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.2s; padding: 8px; display: flex; align-items: center; justify-content: center; }
-        .action-btn.mic { color: var(--accent); }
-        .action-btn.send { background: var(--accent); color: #000; border-radius: 50%; width: 40px; height: 40px; }
+        .action-btn { background: transparent; border: none; color: var(--gold); font-size: 1.3rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
+        .send-btn { background: var(--gold); color: #000; width: 42px; height: 42px; border-radius: 50%; justify-content: center; font-size: 1.1rem; }
         .action-btn:active { transform: scale(0.9); }
 
-        /* Answer Bubble */
-        .answer-bubble { background: var(--glass); padding: 15px; border-radius: 20px; border-bottom-left-radius: 5px; align-self: flex-start; max-width: 90%; line-height: 1.6; border: 1px solid rgba(255,255,255,0.05); animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <audio id="snd-msg" src="https://www.soundjay.com/communication/sounds/message-sent-1.mp3"></audio>
+    <audio id="snd-click" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
-    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-layer-group"></i></div>
 
     <div class="sidebar" id="sidebar">
-        <button onclick="googleLogin()" style="width:100%; padding:12px; border-radius:15px; border:none; background:var(--accent); font-weight:bold; margin-bottom:20px;"><i class="fab fa-google"></i> Login</button>
-        <p style="color:var(--accent); font-size:0.8rem;">DEVELOPER: Karimov Asliddin</p>
-        <div id="history" style="margin-top:20px;"></div>
+        <button onclick="googleLogin()" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--gold); background:transparent; color:var(--gold); font-weight:bold; cursor:pointer; margin-bottom:20px;">
+            <i class="fab fa-google"></i> HISOBGA KIRISH
+        </button>
+        <div style="height:1px; background:rgba(223, 194, 125, 0.2); margin-bottom:20px;"></div>
+        <p style="font-size:0.75rem; color:var(--gold); text-align:center;">KARIMOV ASLIDDIN</p>
     </div>
 
     <div class="chat-display" id="chatDisplay">
         <div class="welcome-msg">
-            <h1>AI Search PRO</h1>
-            <p>Qanday yordam bera olaman?</p>
+            <h1>AI Search <span style="font-weight:300;">PREMIUM</span></h1>
+            <p style="color:#64748b;">Oltin uslubdagi aqlli yordamchi</p>
         </div>
     </div>
 
     <div class="input-container">
         <div class="input-wrapper">
-            <button class="action-btn mic" onclick="startVoice()"><i class="fas fa-microphone"></i></button>
-            <input type="text" id="query" placeholder="Savol yozing..." autocomplete="off">
-            <button class="action-btn send" onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
+            <button class="action-btn" onclick="startVoice()"><i class="fas fa-microphone-lines"></i></button>
+            <input type="text" id="query" placeholder="Savolingizni yozing..." autocomplete="off">
+            <button class="action-btn send-btn" onclick="askAI()"><i class="fas fa-arrow-up"></i></button>
         </div>
     </div>
 
@@ -76,14 +87,15 @@
 
             const q = input.value;
             input.value = "";
+            document.getElementById('snd-click').play();
             
-            // Foydalanuvchi savoli
-            display.innerHTML += `<div style="align-self: flex-end; background: var(--accent); color: #000; padding: 10px 15px; border-radius: 20px; border-bottom-right-radius: 5px;">${q}</div>`;
+            // User bubble
+            display.innerHTML += `<div class="msg user-msg">${q}</div>`;
             
-            // AI javob konteyneri
+            // AI bubble placeholder
             const aiMsgDiv = document.createElement('div');
-            aiMsgDiv.className = 'answer-bubble';
-            aiMsgDiv.innerHTML = "<i>AI o'ylamoqda...</i>";
+            aiMsgDiv.className = 'msg ai-msg';
+            aiMsgDiv.innerHTML = "<i>O'ylanmoqdaman...</i>";
             display.appendChild(aiMsgDiv);
             display.scrollTop = display.scrollHeight;
 
@@ -95,8 +107,9 @@
                 });
                 const data = await res.json();
                 aiMsgDiv.innerText = data.result;
-                document.getElementById('snd-msg').play();
-            } catch(e) { aiMsgDiv.innerText = "Xatolik yuz berdi. API kalitni tekshiring."; }
+            } catch(e) { 
+                aiMsgDiv.innerText = "Xatolik yuz berdi. Iltimos, API kalitni tekshiring."; 
+            }
             display.scrollTop = display.scrollHeight;
         }
 
@@ -106,19 +119,18 @@
             rec.onstart = () => { document.getElementById('query').placeholder = "Eshityapman..."; };
             rec.onresult = (e) => { 
                 document.getElementById('query').value = e.results[0][0].transcript;
-                document.getElementById('query').placeholder = "Savol yozing...";
                 askAI();
             };
             rec.start();
         }
 
-        // Firebase - O'zingiznikini joylang!
+        // Firebase - Ma'lumotlaringizni kiriting
         const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
         firebase.initializeApp(firebaseConfig);
         function googleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().signInWithPopup(provider).then(res => {
-                alert("Salom, " + res.user.displayName);
+                alert("Xush kelibsiz, " + res.user.displayName);
                 toggleMenu();
             });
         }
