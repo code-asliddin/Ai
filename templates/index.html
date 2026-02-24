@@ -3,165 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Search Ultra Pro - Karimov Asliddin</title>
-    
+    <title>AI Search Ultra - Karimov Asliddin</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root { --accent: #38bdf8; --bg: #020617; --card: rgba(30, 41, 59, 0.5); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui; }
+        :root { --accent: #00d2ff; --bg: #050a18; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-top: 80px; overflow-x: hidden; }
+        
+        /* Shaffof Sidebar */
+        .sidebar { position: fixed; left: -320px; top: 0; width: 300px; height: 100%; background: rgba(10, 20, 40, 0.95); backdrop-filter: blur(15px); transition: 0.4s; z-index: 2000; padding: 100px 20px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .sidebar.active { left: 0; }
 
-        body { 
-            background: var(--bg); color: white; min-height: 100vh;
-            background-image: radial-gradient(circle at 50% -20%, #1e1b4b, #020617);
-            display: flex; flex-direction: column; align-items: center; padding-top: 80px;
-        }
+        /* Asosiy Card */
+        .glass-card { width: 95%; max-width: 600px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        h1 { text-align: center; font-size: 2.2rem; margin-bottom: 25px; background: linear-gradient(45deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* 1. Model Selector */
-        .model-selector {
-            position: fixed; top: 20px; right: 20px; background: var(--card);
-            padding: 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); z-index: 1000;
-        }
-        select { background: transparent; color: white; border: none; outline: none; cursor: pointer; }
+        /* Kirish maydoni */
+        .input-group { position: relative; display: flex; gap: 10px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 12px 15px; outline: none; font-size: 1rem; }
+        .icon-btn { background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer; transition: 0.3s; padding: 0 10px; }
+        .icon-btn:hover { color: var(--accent); }
+        .send-btn { background: var(--accent); color: #000; border: none; padding: 12px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; }
 
-        /* 2. Glass Sidebar */
-        .sidebar {
-            position: fixed; left: -320px; top: 0; width: 300px; height: 100%;
-            background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; padding: 100px 20px;
-        }
-        .sidebar.active { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
-
-        /* 3. Main Chat Area */
-        .chat-container { width: 100%; max-width: 800px; padding: 20px; }
-        .glass-card { 
-            background: var(--card); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px; padding: 30px; backdrop-filter: blur(10px);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-
-        /* 4. Input Box Ultra */
-        .input-wrapper {
-            position: relative; margin-top: 20px; display: flex; gap: 10px;
-        }
-        input { 
-            flex: 1; padding: 18px 25px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px; color: white; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
-
-        .icon-btn { 
-            background: var(--card); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 15px; border-radius: 15px; cursor: pointer; transition: 0.2s;
-        }
-        .icon-btn:hover { background: var(--accent); color: black; }
-
-        /* 5. Response Styling */
-        #answer { margin-top: 30px; line-height: 1.8; font-size: 1.05rem; }
-        pre { border-radius: 12px !important; margin: 15px 0 !important; } /* Kodlar uchun */
-
-        .menu-toggle { position: fixed; top: 20px; left: 20px; z-index: 2001; font-size: 22px; cursor: pointer; color: var(--accent); }
+        #answer { margin-top: 25px; color: #ddd; line-height: 1.6; min-height: 50px; }
+        .menu-toggle { position: fixed; top: 20px; left: 20px; z-index: 2001; font-size: 24px; cursor: pointer; color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <audio id="snd-pop" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
     <audio id="snd-msg" src="https://www.soundjay.com/communication/sounds/message-sent-1.mp3"></audio>
 
     <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
 
-    <div class="model-selector">
-        <i class="fas fa-robot" style="color: var(--accent); margin-right: 5px;"></i>
-        <select id="model">
-            <option>Gemini 1.5 Pro</option>
-            <option>GPT-4o (Turbo)</option>
-            <option>Claude 3.5 Sonnet</option>
-        </select>
-    </div>
-
     <div class="sidebar" id="sidebar">
-        <div id="userInfo" style="text-align:center; margin-bottom:40px;">
-            <button class="icon-btn" style="width:100%" onclick="googleLogin()">
-                <i class="fab fa-google"></i> Login
-            </button>
+        <div id="userInfo">
+            <button class="send-btn" style="width: 100%;" onclick="googleLogin()">Google Login</button>
         </div>
-        <h4 style="color:var(--accent); text-transform:uppercase; font-size:0.8rem;">Tarix</h4>
-        <div id="history" style="margin-top:15px;"></div>
+        <hr style="margin: 20px 0; opacity: 0.1;">
+        <p style="font-size: 0.8rem; color: var(--accent);">DEVELOPER: Karimov Asliddin</p>
     </div>
 
-    <div class="chat-container">
-        <div class="glass-card">
-            <h1 style="text-align:center; font-weight:800; letter-spacing:-1px; margin-bottom:20px;">AI Search <span style="color:var(--accent)">PRO</span></h1>
-            
-            <div id="answer">Salom! Men sizning shaxsiy AI yordamchingizman. Karimov Asliddin tomonidan yaratilganman.</div>
+    <div class="glass-card">
+        <h1>AI Search <span style="font-size: 1rem; vertical-align: middle;">PRO</span></h1>
+        
+        <div id="answer">Savolingizni bering...</div>
 
-            <div class="input-wrapper">
-                <input type="text" id="query" placeholder="Savol yozing yoki mikrofondan foydalaning..." onkeypress="if(event.key==='Enter') askAI()">
-                <button class="icon-btn" onclick="startVoice()"><i class="fas fa-microphone"></i></button>
-                <button class="icon-btn" style="background:var(--accent); color:black;" onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
-            </div>
+        <div class="input-group">
+            <input type="text" id="query" placeholder="Xabar yozing..." onkeypress="if(event.key==='Enter') askAI()">
+            <button class="icon-btn" onclick="startVoice()"><i class="fas fa-microphone"></i></button>
+            <button class="send-btn" onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <script>
-        const sndPop = document.getElementById('snd-pop');
-        const sndMsg = document.getElementById('snd-msg');
+        // FIREBASE CONFIG - Buni Firebase konsolidan olib almashtiring!
+        const firebaseConfig = {
+            apiKey: "AIza...", 
+            authDomain: "LOYIHA-NOMI.firebaseapp.com",
+            projectId: "LOYIHA-NOMI",
+            storageBucket: "LOYIHA-NOMI.appspot.com",
+            messagingSenderId: "12345",
+            appId: "1:12345:web:abc"
+        };
+        firebase.initializeApp(firebaseConfig);
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // 5. Typewriter Effect
-        function typeWriter(text, i, fn) {
-            if (i < text.length) {
-                document.getElementById('answer').innerHTML = text.substring(0, i+1) + '<span style="color:var(--accent)">|</span>';
-                setTimeout(() => typeWriter(text, i + 1, fn), 15);
-            } else {
-                document.getElementById('answer').innerHTML = text;
-                Prism.highlightAll(); // Kodlarni ranglash
-                if(typeof fn == 'function') fn();
-            }
-        }
-
-        // 2. Voice Recognition
-        function startVoice() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'uz-UZ';
-            recognition.start();
-            recognition.onresult = (event) => {
-                document.getElementById('query').value = event.results[0][0].transcript;
-                askAI();
-            };
-        }
-
         async function askAI() {
             const q = document.getElementById('query').value;
+            const ans = document.getElementById('answer');
             if(!q) return;
-            sndPop.play();
-            document.getElementById('answer').innerHTML = "O'ylanmoqdaman...";
 
+            ans.innerHTML = "<span style='color: var(--accent)'>AI o'ylamoqda...</span>";
+            
             try {
-                const response = await fetch('/search', {
+                const res = await fetch('/search', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     body: `query=${encodeURIComponent(q)}`
                 });
-                const data = await response.json();
-                sndMsg.play();
-                typeWriter(data.result, 0);
-                document.getElementById('query').value = "";
-            } catch(e) { document.getElementById('answer').innerText = "Xato yuz berdi."; }
+                const data = await res.json();
+                ans.innerText = data.result;
+                document.getElementById('snd-msg').play();
+            } catch(e) { ans.innerText = "Xatolik! API kalitini tekshiring."; }
         }
 
-        // Firebase (O'z kodingizni joylang)
-        const firebaseConfig = { apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." };
-        firebase.initializeApp(firebaseConfig);
+        function startVoice() {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!Speech) return alert("Brauzer ovozni qo'llab-quvvatlamaydi");
+            const rec = new Speech();
+            rec.lang = 'uz-UZ';
+            rec.start();
+            rec.onresult = (e) => { document.getElementById('query').value = e.results[0][0].transcript; askAI(); };
+        }
+
         function googleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().signInWithPopup(provider).then(res => {
-                document.getElementById('userInfo').innerHTML = `<img src="${res.user.photoURL}" style="width:60px; border-radius:50%; border:2px solid var(--accent);"><br><b>${res.user.displayName}</b>`;
+                document.getElementById('userInfo').innerHTML = `<b>${res.user.displayName}</b>`;
             });
         }
     </script>
