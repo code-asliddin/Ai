@@ -2,126 +2,150 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Search - Karimov Asliddin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Search Pro - Karimov Asliddin</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: radial-gradient(circle at top right, #1e1b4b, #020617); min-height: 100vh; color: white; display: flex; flex-direction: column; align-items: center; padding: 100px 20px 50px; }
-
-        .menu-btn { position: fixed; top: 20px; left: 20px; font-size: 24px; cursor: pointer; z-index: 10001; background: rgba(255, 255, 255, 0.1); padding: 12px 16px; border-radius: 14px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
-
-        .sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(25px); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 90px 20px 20px; border-right: 1px solid rgba(56, 189, 248, 0.3); display: flex; flex-direction: column; }
-        .sidebar.active { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.5); }
-
-        .new-chat-btn { background: #0ea5e9; color: white; padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; cursor: pointer; margin-bottom: 25px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        h3 { font-size: 0.9rem; color: #38bdf8; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
+        :root { --neon-blue: #0ea5e9; --deep-dark: #020617; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         
-        .creator-info { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        .creator-info p { font-size: 0.85rem; margin-bottom: 5px; }
+        body { 
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%); 
+            min-height: 100vh; color: white; overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center; padding: 80px 20px;
+        }
 
-        .history-list { flex-grow: 1; overflow-y: auto; list-style: none; }
-        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem; cursor: pointer; border: 1px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-item:hover { border-color: #38bdf8; }
+        /* Neon Chiroqlar */
+        body::before {
+            content: ""; position: fixed; top: -10%; left: -10%; width: 40%; height: 40%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+            z-index: -1; pointer-events: none;
+        }
 
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; padding: 30px; width: 100%; max-width: 550px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        h1 { font-size: 2rem; margin-bottom: 20px; text-align: center; }
-        input { width: 100%; padding: 16px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; margin-bottom: 15px; outline: none; font-size: 1rem; }
-        .send-btn { width: 100%; padding: 16px; background: #0ea5e9; border: none; border-radius: 16px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        /* Super Sidebar */
+        .sidebar { 
+            position: fixed; left: -320px; top: 0; width: 300px; height: 100%; 
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(30px); 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; 
+            padding: 100px 25px 30px; border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar.active { left: 0; box-shadow: 20px 0 80px rgba(0,0,0,0.8); }
 
-        #res { margin-top: 25px; background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.05); line-height: 1.6; font-size: 0.95rem; }
+        /* Profil Qismi */
+        .profile-section {
+            text-align: center; margin-bottom: 40px; padding: 20px;
+            background: rgba(255, 255, 255, 0.05); border-radius: 20px;
+        }
+        .profile-img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--neon-blue); margin-bottom: 10px; object-fit: cover; }
+
+        /* Glass Card */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px; 
+            padding: 50px 30px; width: 100%; max-width: 600px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6); transform: perspective(1000px);
+        }
+
+        h1 { font-size: 3rem; font-weight: 900; background: linear-gradient(to right, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; text-align: center; }
+
+        /* Input & Button */
+        .search-box { position: relative; width: 100%; }
+        input { 
+            width: 100%; padding: 20px 25px; background: rgba(255, 255, 255, 0.05); 
+            border: 2px solid rgba(255, 255, 255, 0.05); border-radius: 20px; 
+            color: white; font-size: 1.1rem; outline: none; transition: 0.4s;
+        }
+        input:focus { border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); }
+
+        button.main-btn { 
+            width: 100%; padding: 18px; margin-top: 15px; background: var(--neon-blue); 
+            border: none; border-radius: 20px; color: white; font-weight: 800; 
+            cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4);
+            transition: 0.3s;
+        }
+        button.main-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(14, 165, 233, 0.6); }
+
+        /* Menu Toggle */
+        .menu-toggle { position: fixed; top: 25px; left: 25px; z-index: 10001; cursor: pointer; color: white; font-size: 28px; background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 15px; }
+
+        .history-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: 0.3s; }
+        .history-item:hover { border-color: var(--neon-blue); background: rgba(14, 165, 233, 0.05); }
+
+        #res { margin-top: 30px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 
     <div class="sidebar" id="sidebar">
-        <div class="new-chat-btn" onclick="newChat()"><span>+</span> Yangi Chat</div>
-        <h3>Creator</h3>
-        <div class="creator-info">
-            <p><strong>Ism:</strong> Karimov Asliddin</p>
-            <p><strong>Roli:</strong> AI Developer</p>
+        <div class="profile-section" id="profileSection">
+            <button class="main-btn" onclick="googleLogin()">Google bilan kirish</button>
         </div>
-        <h3>Tarix</h3>
-        <div class="history-list" id="historyList"></div>
+        
+        <h3>Creator</h3>
+        <p style="font-size: 0.9rem; opacity: 0.7; margin: 10px 0 30px;">Karimov Asliddin</p>
+
+        <h3>Oxirgi savollar</h3>
+        <div id="historyList"></div>
     </div>
 
     <div class="glass-card">
-        <h1>AI Search</h1>
-        <input type="text" id="query" placeholder="Savol bering..." autocomplete="off">
-        <button class="send-btn" onclick="askAI()">Izlash</button>
+        <h1>AI Search Pro</h1>
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Sizni nima qiziqtiradi?" autocomplete="off">
+            <button class="main-btn" onclick="askAI()">AI dan so'rash</button>
+        </div>
+
         <div id="res">
-            <strong style="color: #38bdf8;">Javob:</strong>
-            <p id="answer" style="margin-top: 10px;">Salom! Qanday yordam bera olaman?</p>
+            <p id="answer" style="opacity: 0.8; font-size: 1.05rem;"></p>
         </div>
     </div>
 
     <script>
-        // Sahifa yuklanganda tarixni tiklash
-        window.onload = loadHistory;
+        // Firebase Config (O'z kodingizni bu yerga qo'ying)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function googleLogin() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).then(res => {
+                updateUI(res.user);
+            }).catch(err => console.log(err));
+        }
+
+        function updateUI(user) {
+            const profile = document.getElementById('profileSection');
+            profile.innerHTML = `
+                <img src="${user.photoURL}" class="profile-img">
+                <h4>${user.displayName}</h4>
+                <p style="font-size: 0.8rem; opacity: 0.6;">${user.email}</p>
+            `;
+        }
 
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-            document.body.style.overflow = sidebar.classList.contains('active') ? "hidden" : "auto";
+            document.getElementById('sidebar').classList.toggle('active');
         }
 
-        function newChat() {
-            document.getElementById('query').value = "";
-            document.getElementById('answer').innerText = "Yangi chat boshlandi.";
-            toggleMenu();
-        }
-
-        function saveToHistory(query) {
-            let history = JSON.parse(localStorage.getItem('ai_history')) || [];
-            history.unshift(query);
-            if (history.length > 20) history.pop(); // Oxirgi 20 ta savolni saqlash
-            localStorage.setItem('ai_history', JSON.stringify(history));
-            loadHistory();
-        }
-
-        function loadHistory() {
-            const historyList = document.getElementById('historyList');
-            const history = JSON.parse(localStorage.getItem('ai_history')) || [];
-            historyList.innerHTML = history.length ? "" : '<div class="history-item" style="opacity: 0.5;">Hozircha bo\'sh...</div>';
-            
-            history.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerText = item;
-                div.onclick = () => { document.getElementById('query').value = item; askAI(); toggleMenu(); };
-                historyList.appendChild(div);
-            });
-        }
-
+        // Qidiruv va Tarix funksiyalari (avvalgi muloqotdagidek)
         async function askAI() {
             const input = document.getElementById('query');
             const answer = document.getElementById('answer');
-            const queryText = input.value.trim();
+            if(!input.value.trim()) return;
 
-            if (!queryText) return;
-            answer.innerText = "Qidirilmoqda...";
-            
-            try {
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `query=${encodeURIComponent(queryText)}`
-                });
-                const data = await response.json();
-                answer.innerText = data.result || "Xatolik!";
-                saveToHistory(queryText);
-                input.value = "";
-            } catch (e) {
-                answer.innerText = "Server xatosi!";
-            }
+            answer.innerHTML = "O'ylanmoqdaman...";
+            // Fetch logic...
         }
-
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const btn = document.querySelector('.menu-btn');
-            if (!sidebar.contains(e.target) && !btn.contains(e.target) && sidebar.classList.contains('active')) toggleMenu();
-        });
     </script>
 </body>
 </html>

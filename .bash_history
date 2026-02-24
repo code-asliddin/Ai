@@ -1,41 +1,3 @@
-nano style.css
-nano index.js
-git add .
-git commit -m "Omega Pro v5.5 - Hyper Space Edition"
-git push origin gh-pages --force
-nano index.html
-nano style.css
-nano index.js
-# 1. Barcha yangilangan fayllarni keshga qo'shish
-git add .
-# 2. Saqlash (Commit) - Loyihani "Monster Collab" deb nomlaymiz
-git commit -m "Omega Pro v5.5: Collab with SpaceX, Mensa, and CodePen"
-# 3. GitHub serveriga yuborish (Asosiy sahifangizni yangilaydi)
-git push origin gh-pages --force
-pkg update && pkg upgrade
-mkdir saytim
-cd saytim
-pkg install micro git
-micro index.html
-micro style.css
-micro script.js
-python -m http.server 8080
-pkg update
-pkg install python
-pip install pygame
-pkg update
-pkg install python
-pip install pygame
-pkg update
-pkg install python
-pip install pygame
-mkdir chess_game
-cd chess_game
-touch main.py        # asosiy dastur
-touch board.py       # taxta mantiqi
-touch pieces.py      # figuralar haqida
-touch utils.py       # yordamchi funksiyalar
-mkdir assets         # rasm, font kabi resurslar (ixtiyoriy)chess_game/
 ├── main.py
 ├── board.py
 ├── pieces.py
@@ -498,3 +460,41 @@ nano script.js
 python -m http.server 8080
 nano script.js
 python -m http.server 8080
+nano vercel.json
+pkg update && pkg upgrade
+pkg install clang
+nano brain.c
+# Kodni kompyuter tushunadigan tilga o'tkazish
+clang brain.c -o brain
+# Dasturni ishga tushirish
+./brain
+pkg install sqlite
+pkg install sqlite clang
+sqlite3 brain.db
+nano brain_sql.c
+-lsqlite3
+clang brain_sql.c -o brain -lsqlite3
+./brain
+nano web_bridge.py
+nano index.html
+python web_bridge.py
+rm -rf *
+pkg update && pkg upgrade
+pkg install python clang sqlite
+pip install flask requests
+mkdir templates
+nano templates/index.html
+nano app.py
+python app.py
+ls templates
+pip install flask requests
+python app.py
+Is
+Ia -R
+nano app.py
+python app.py
+nano templates/index.html
+python app.py
+nano app.py
+​python app.py
+python app.py
